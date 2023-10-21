@@ -1,25 +1,66 @@
-import logo from './logo.svg';
+import {useEffect, useCallback} from "react";
+import {useSelector, useDispatch} from 'react-redux';
 import './App.css';
 
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const dispatch = useDispatch();
+
+    const globalState = useSelector((state) => state);
+
+    const counterOperation = useCallback(
+        (type, payload) => {
+            dispatch({type, payload});
+        },
+        [dispatch]
+    );
+
+    useEffect(() => counterOperation("increase", 5), [counterOperation]);
+
+    const handlerCounterValue = (value) => {
+        if (value === 0) {
+            return 'no number';
+        }
+        return value;
+    }
+
+    // const increase = () => {
+    //     dispatch({type: "increase", payload: 5});
+    // }
+    //
+    //
+    // const decrease = () => {
+    //     dispatch({type: "decrease", payload: 2});
+    // }
+
+    const toggleCounter = () => {
+        dispatch({type: "toggleCounter"});
+    }
+
+
+    return (
+        <div className='App'>
+            <h1>Hello Redux Basic</h1>
+            {globalState.showCounter && (
+                <>
+                    <div className='counter'>Counter: {handlerCounterValue(globalState.value)}</div>
+                    <div>
+                        <button className='btn' onClick={() => counterOperation('increase', 5)}>
+                            increase +
+                        </button>
+                        <button className='btn' onClick={() => counterOperation('decrease', 2)}>
+                            decrease -
+                        </button>
+                    </div>
+
+                </>
+            )}
+
+            <div>
+                <button className='btn' onClick={toggleCounter}>Hide/Show Counter Number</button>
+            </div>
+        </div>
+    );
 }
 
 export default App;
